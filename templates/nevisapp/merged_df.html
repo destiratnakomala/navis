@@ -1,0 +1,336 @@
+{% extends "nevisapp/base2.html" %}
+{% block body_block %}
+    <!-- <h1>Aluminium Price Prediction</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Aluminium Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in merged_df %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.aluminium_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+          <!-- partial -->
+          <!-- partial:partials/_sidebar.html -->
+    
+          <!-- partial -->
+          <div>
+            <div class="content-wrapper">
+              <!-- <div class="home-tab">
+                    <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                      <div>
+                        <div class="btn-wrapper">
+                          <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
+                          <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
+                          <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
+                        </div>
+                      </div>
+                    </div> -->
+                    <div class="tab-content tab-content-basic">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                          <div class="row">
+                              <div class="col-md-12 grid-margin stretch-card">
+                                <div class="card">
+                                  <div class="card-body">
+                                    <div class="template-demo">
+                                      <h2>Aluminium Price Prediction Analysis</h2>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- <div class="row">
+                              <div class="col-md-12 grid-margin stretch-card">
+                                <div class="card">
+                                  <div class="card-body">
+                                    <h4 class="card-title">Input API</h4>
+                                    <form class="forms-sample">
+                                      <div class="form-group">
+                                        <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username">
+                                      </div>
+                                      <button type="submit" class="btn btn-primary me-2">Submit</button>
+                                      <button class="btn btn-light">Cancel</button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div> -->
+                            <div class="row">
+                              <div class="col-md-4 grid-margin stretch-card">
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h4 class="card-title">Price Next Month</h4>
+                                      <div class="media">
+                                        <i class="ti-world icon-md text-info d-flex align-self-center me-3"></i>
+                                        <div class="media-body">
+                                          <h3 class="rate-percentage">2239.34 $</h3>
+                                          <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>-0.5%</span></p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-4 grid-margin stretch-card">
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h4 class="card-title">Difference</h4>
+                                      <div class="media">
+                                        <i class="ti-world icon-md text-info d-flex align-self-center me-3"></i>
+                                        <div class="media-body">
+                                          <h3 class="rate-percentage">-23 $</h3>
+                                          <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>  
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-4 grid-margin stretch-card">
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h4 class="card-title">Average</h4>
+                                      <div class="media">
+                                        <i class="ti-world icon-md text-info d-flex align-self-center me-3"></i>
+                                        <div class="media-body">
+                                          <h3 class="rate-percentage">2145.23 $</h3>  
+                                          <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span></p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                          <div class="row">
+                              <div class="col-lg-8 grid-margin stretch-card">
+                                <div class="card">
+                                  <div class="card-body">
+                                    <h4 class="card-title">Trend for Predictive Aluminium Price</h4>
+                                    <canvas id="myChart" height="120"></canvas>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-lg-4 grid-margin stretch-card">
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h4 class="card-title">Predictive Analysis Report</h4>
+                                      <div class="list align-items-center border-bottom py-2">
+                                          <div class="wrapper w-100">
+                                            <p class="mb-2 font-weight-medium">
+                                              Mean Squared Error (MSE)
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                              <div class="d-flex align-items-center">
+                                                <p class="mb-0 text-small text-muted">27,85</p>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="list align-items-center border-bottom py-2">
+                                          <div class="wrapper w-100">
+                                            <p class="mb-2 font-weight-medium">
+                                              Root Mean Squared Error (RMSE)
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                              <div class="d-flex align-items-center">
+                                                <p class="mb-0 text-small text-muted">5,29</p>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="list align-items-center border-bottom py-2">
+                                          <div class="wrapper w-100">
+                                            <p class="mb-2 font-weight-medium">
+                                              Mean Absolute Error (MAE)
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                              <div class="d-flex align-items-center">
+                                                <p class="mb-0 text-small text-muted">3,72</p>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="list align-items-center border-bottom py-2">
+                                          <div class="wrapper w-100">
+                                            <p class="mb-2 font-weight-medium">
+                                              R-squared (R2) Score
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                              <div class="d-flex align-items-center">
+                                                <p class="mb-0 text-small text-muted">0,74</p>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              <div class="col-lg-6 grid-margin stretch-card">
+                                <div class="card">
+                                  <div class="card-body">
+                                    <h4 class="card-title">Conclusion</h4>
+                                  
+                                      <div class="text"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-lg-6 grid-margin stretch-card">
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h4 class="card-title">Recommendation</h4>
+                                    
+                                        <div class="text2"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+              </div>
+            </div>
+            <!-- content-wrapper ends -->
+            <!-- partial:partials/_footer.html -->
+            <footer class="footer">
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
+            href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
+        <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2021. All rights reserved.</span>
+      </div>
+    </footer>
+            <!-- partial -->
+          </div>
+          <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+      </div>
+      <script>
+        const div2 = document.querySelector('.text2');
+        const text2 = "Penurunan Produksi Aluminium Produksi aluminium mengalami penurunan sebesar 8,87 ton dari tahun 2020 ke tahun 2021. Ini adalah tren yang signifikan dan dapat menjadi perhatian utama dalam industri aluminium di Indonesia. Penurunan ini bisa disebabkan oleh berbagai faktor, seperti penurunan permintaan global atau masalah internal dalam proses produksi.";
+
+        function textTypingEffect(element, text, i=0) {
+            element.textContent += text[i];
+
+            if (i === text.length - 1) {
+                return;
+            }
+
+            setTimeout(() => textTypingEffect(element, text, i+1), 50);
+        }
+        textTypingEffect(div2, text2);
+    </script>
+      <script>
+        const div = document.querySelector('.text');
+        const text = "Penurunan Produksi Aluminium Produksi aluminium mengalami penurunan sebesar 8,87 ton dari tahun 2020 ke tahun 2021. Ini adalah tren yang signifikan dan dapat menjadi perhatian utama dalam industri aluminium di Indonesia. Penurunan ini bisa disebabkan oleh berbagai faktor, seperti penurunan permintaan global atau masalah internal dalam proses produksi.";
+
+        function textTypingEffect(element, text, i=0) {
+            element.textContent += text[i];
+
+            if (i === text.length - 1) {
+                return;
+            }
+
+            setTimeout(() => textTypingEffect(element, text, i+1), 50);
+        }
+        textTypingEffect(div, text);
+    </script>
+      <script>
+       // Fetch data from the endpoint
+fetch('http://127.0.0.1:8000/nevisapp/al_pred/')
+    .then(response => response.json())
+    .then(data => {
+        // Extracting labels and data from the fetched response
+        const labels = data.data.map(item => item['date']);
+        const datasetData = data.data.map(item => item['aluminium_price']);
+
+        // Update the data object with fetched data
+        const updatedData = {
+            labels: labels,
+            datasets: [{
+                label: 'Aluminium Price',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: datasetData,
+                fill: false,
+            }]
+        };
+
+        // Update the configuration options
+        const config = {
+            type: 'line',
+            data: updatedData,
+            options: {
+                responsive: true,
+            },
+        };
+
+        // Create a new chart instance
+        var myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+      </script>
+      <script>
+        // Fetch data from the endpoint
+        fetch('http://127.0.0.1:8000/nevisapp/al_pred/')
+          .then(response => response.json())
+          .then(data => {
+            // Convert date strings to Date objects
+            data.data.forEach(entry => {
+              entry.date = new Date(entry.date);
+            });
+    
+            // Prepare data for Chart.js
+            const labels = data.data.map(entry => entry.date);
+            const prices = data.data.map(entry => entry.aluminium_price);
+    
+            // Create Chart.js chart
+            const ctx = document.getElementById('aluminiumChart').getContext('2d');
+            const chart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Aluminium Price',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  data: prices,
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  x: {
+                    type: 'time',
+                    time: {
+                      unit: 'month'
+                    },
+                    title: {
+                      display: true,
+                      text: 'Date'
+                    }
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: 'Price'
+                    }
+                  }
+                }
+              }
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      </script>
+      
+{% endblock %}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Animation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            width: 300px; /* Adjust card width as needed */
+            margin: 0 auto; /* Center the card */
+            padding: 20px;
+        }
+        #text-container {
+            font-size: 24px;
+            text-align: center;
+            overflow: hidden; /* This will hide the overflow text */
+            white-space: nowrap; /* This will keep the text on one line */
+            animation: typing 1.5s steps(40, end);
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-caret {
+            from, to {
+                border-color: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="text"></div>
+    </div>
+
+    <script>
+        const div = document.querySelector('.text');
+        const text = "This is a typing animation. how cool is this?";
+
+        function textTypingEffect(element, text, i=0) {
+            element.textContent += text[i];
+
+            if (i === text.length - 1) {
+                return;
+            }
+
+            setTimeout(() => textTypingEffect(element, text, i+1), 50);
+        }
+        textTypingEffect(div, text);
+    </script>
+</body>
+</html>

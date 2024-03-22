@@ -11,9 +11,70 @@ import pandas as pd
 from django.conf import settings
 import os
 
+#predict analysis
+import pandas as pd
+# from sklearn.model_selection import train_test_split
+# from sklearn.linear_model import LinearRegression
+import numpy as np
+
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
 from .models import News
 
 import requests
+import json
+
+def coba(request):
+    return JsonResponse({'test': "hallo"})
+
+def get_data_from_api(request):
+    api_url = 'http://127.0.0.1:8000/nevisapp/al_pred/'  # Replace this with your API endpoint
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            data = response.json()
+            return JsonResponse(data)
+        else:
+            return JsonResponse({'error': 'Failed to fetch data from API'}, status=response.status_code)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_pred_al(request):
+    # Change 'your_excel_file.xlsx' to the path of your Excel file
+    excel_file_path = os.path.join(settings.BASE_DIR, 'dataset', 'test.xlsx')
+
+    # Read data from Excel file using pandas
+    df = pd.read_excel(excel_file_path)
+    # Convert 'Date' column to datetime type
+    df['Date'] = pd.to_datetime(df['Date'])
+
+    data = df[['Date', 'Aluminium Price']].rename(columns={'Date': 'ds', 'Aluminium Price': 'y'})
+    data.set_index('ds', inplace=True)
+
+    model = ExponentialSmoothing(data, seasonal='add', seasonal_periods=12)
+    fitted_model = model.fit()
+    predictions = fitted_model.forecast(steps=10)
+    df_pred = pd.DataFrame(list(predictions.items()), columns=['Date', 'Value'])
+    merged_df = pd.merge(df[['Date','Aluminium Price']], df_pred, on='Date', how='outer')
+    merged_df['Aluminium Price'] = merged_df['Aluminium Price'].fillna(merged_df['Value'])
+    merged_df.drop(columns=['Value'], inplace=True)
+
+    # Convert 'Date' column to string
+    merged_df['Date'] = merged_df['Date'].dt.strftime('%Y-%m-%d')
+    merged_df.rename(columns={'Date': 'date', 'Aluminium Price': 'aluminium_price'}, inplace=True)
+
+    merged_df_json = merged_df.to_json(orient='records', double_precision=15)
+
+    # Return the JSON response with column names
+    response_data = {"data": json.loads(merged_df_json)}
+    return JsonResponse(response_data)
+    # return render(request, 'nevisapp/merged_df.html', {'merged_df': json.loads(merged_df_json)})
+    # Pass the data to the template
+    # return render(request, 'nevisapp/merged_df.html', {'merged_df_json': merged_df_json})
+
+def al_predict(request):
+    return render(request, 'nevisapp/merged_df.html')
+
 
 def import_and_return_json(request):
     # Change 'your_excel_file.xlsx' to the path of your Excel file
@@ -22,11 +83,51 @@ def import_and_return_json(request):
     # Read data from Excel file using pandas
     df = pd.read_excel(excel_file_path)
 
-    # Convert dataframe to JSON
-    data_json = df.to_json(orient='records')
+    # # Convert dataframe to JSON
+    # data_json = df.to_json(orient='records')
+    # # Remove leading and trailing double quotes
+    # data_string = data_json.strip('"')
 
-    # Return the JSON response
-    return JsonResponse(data_json, safe=False)
+    # # Convert to JSON
+    # data_json = json.loads(data_string)
+
+    # # Return the JSON response
+    # return JsonResponse({"results": data_json})
+
+    # Convert the JSON response to a DataFrame
+    # data = {
+    #     "Date": [1293840000000, 1296518400000, 1298937600000, 1301616000000],
+    #     "Aluminium Price": [2439.7, 2515.26, 2555.5, 2667.4166666667],
+    #     "Copper Price": [9533.2, 9884.9, 9503.3586956522, 9482.75],
+    #     "BADI -2": [2321.3181818182, 2030.9444444444, 1401.8, 1181.1],
+    #     "MJP": [112.5, 112.5, 113, 114],
+    #     "USD Index": [79.1553809524, 77.7776, 76.2876521739, 74.6897619048],
+    #     "AL Prod (Global)": [3758.482821, 3416.918966, 3788.014108, 3800.103276],
+    #     "AL Cons (Global)": [3646.5591542059, 3210.0681146571, 3674.2978401862, 3823.5741200196],
+    #     "Aluminium stocks": [11886.3473095413, 12093.1981608842, 12206.9144286979, 12183.4435846784],
+    #     "Alumina Index": [378.2975, 392.4375, 402.1475, 410.37],
+    #     "Oil Prices": [97, 104, 115, 123]
+    # }
+
+    # df = pd.DataFrame(data)
+
+    # Define features and target
+    X = df.drop(columns=["Aluminium Price"])
+    y = df["Aluminium Price"]
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train the model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    predictions = model.predict(X_test)
+
+    # Calculate Mean Squared Error
+    mse = np.mean((predictions - y_test) ** 2)
+    return JsonResponse({"mse": mse})
 
 
 # Create your views here.
