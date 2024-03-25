@@ -16,5 +16,8 @@ urlpatterns=[
     path('al/',views.al_predict, name='al'),
     path('al_pred/',views.get_pred_al, name='al_pred'),
     path('al_pred_api/',views.get_data_from_api, name='al_pred_api'),
-    path('coba/', views.coba, name='coba'),
+    path('get_pred_al/',views.get_pred_al, name='get_pred_al'),
+    path('conclusion/', views.req_conclusion, name= 'conclusion'),
+    path('recommendation/', views.get_recommendation, name= 'recommendation'),
+    
 ]

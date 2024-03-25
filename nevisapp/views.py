@@ -18,14 +18,28 @@ import pandas as pd
 import numpy as np
 
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
-
 from .models import News
-
 import requests
 import json
 
-def coba(request):
-    return JsonResponse({'test': "hallo"})
+
+import matplotlib.pyplot as plt
+from django.http import HttpResponse
+from io import BytesIO
+import base64
+# myapp/views.py
+import plotly.graph_objs as go
+import plotly.offline as opy
+
+#summary
+from langchain_openai import OpenAI
+from langchain import verbose
+import langchain.globals
+from dotenv import load_dotenv
+from datetime import datetime
+
+
+
 
 def get_data_from_api(request):
     api_url = 'http://127.0.0.1:8000/nevisapp/al_pred/'  # Replace this with your API endpoint
@@ -39,41 +53,66 @@ def get_data_from_api(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
+
+###########################################################################################################
+
+load_dotenv()
+api_key = os.getenv('OPENAI_API_KEY')
+llm= OpenAI(api_key= api_key, temperature=0.9)
+
+###########################
+alum= '15000 $/ton'
+tanggal_dt= '2030-26-12'
+excel_file_path = os.path.join(settings.BASE_DIR, 'dataset', 'test.xlsx')
+
+df = pd.read_excel(excel_file_path)
+df['Date'] = pd.to_datetime(df['Date'])
+
+data = df[['Date', 'Aluminium Price']].rename(columns={'Date': 'ds', 'Aluminium Price': 'y'})
+data.set_index('ds', inplace=True)
+
+model = ExponentialSmoothing(data, seasonal='add', seasonal_periods=12)
+fitted_model = model.fit()
+predictions = fitted_model.forecast(steps=10)
+df_pred = pd.DataFrame(list(predictions.items()), columns=['Date', 'Value'])
+merged_df = pd.merge(df[['Date','Aluminium Price']], df_pred, on='Date', how='outer')
+merged_df['Aluminium Price'] = merged_df['Aluminium Price'].fillna(merged_df['Value'])
+merged_df.drop(columns=['Value'], inplace=True)
+merged_df['Date'] = merged_df['Date'].dt.strftime('%Y-%m-%d')
+merged_df.rename(columns={'Date': 'date', 'Aluminium Price': 'aluminium_price'}, inplace=True)
+
+
 def get_pred_al(request):
-    # Change 'your_excel_file.xlsx' to the path of your Excel file
-    excel_file_path = os.path.join(settings.BASE_DIR, 'dataset', 'test.xlsx')
-
-    # Read data from Excel file using pandas
-    df = pd.read_excel(excel_file_path)
-    # Convert 'Date' column to datetime type
-    df['Date'] = pd.to_datetime(df['Date'])
-
-    data = df[['Date', 'Aluminium Price']].rename(columns={'Date': 'ds', 'Aluminium Price': 'y'})
-    data.set_index('ds', inplace=True)
-
-    model = ExponentialSmoothing(data, seasonal='add', seasonal_periods=12)
-    fitted_model = model.fit()
-    predictions = fitted_model.forecast(steps=10)
-    df_pred = pd.DataFrame(list(predictions.items()), columns=['Date', 'Value'])
-    merged_df = pd.merge(df[['Date','Aluminium Price']], df_pred, on='Date', how='outer')
-    merged_df['Aluminium Price'] = merged_df['Aluminium Price'].fillna(merged_df['Value'])
-    merged_df.drop(columns=['Value'], inplace=True)
-
-    # Convert 'Date' column to string
-    merged_df['Date'] = merged_df['Date'].dt.strftime('%Y-%m-%d')
-    merged_df.rename(columns={'Date': 'date', 'Aluminium Price': 'aluminium_price'}, inplace=True)
-
     merged_df_json = merged_df.to_json(orient='records', double_precision=15)
-
-    # Return the JSON response with column names
     response_data = {"data": json.loads(merged_df_json)}
     return JsonResponse(response_data)
-    # return render(request, 'nevisapp/merged_df.html', {'merged_df': json.loads(merged_df_json)})
-    # Pass the data to the template
-    # return render(request, 'nevisapp/merged_df.html', {'merged_df_json': merged_df_json})
 
 def al_predict(request):
     return render(request, 'nevisapp/merged_df.html')
+
+
+def req_conclusion(request):
+    prompt_conclusion = f'''Dengan menggunakan bahasa indonesia, berikan 1 paragraf kesimpulan dari nilai aluminium {predictions} , apakah mengalami 
+    penurunan atau kenaikan sesuaikan dengan pola pada{merged_df} dan berikan faktor serta kondisi harga aluminium dunia saat ini'''
+    conclusion= llm.invoke(prompt_conclusion)
+    conclusion_json= json.dumps(conclusion)
+    return JsonResponse({'Conclusion:': conclusion_json})
+
+
+def get_recommendation(request):
+    prompt_recommendation = f'''Dengan menggunakan bahasa indonesia, berikan 3 bullet point rekomendasi untuk 
+    stakeholder yang ingin membeli aluminium berdasarkan dari {predictions}, sesuaikan dengan data {merged_df}'''
+    recommendation= llm.invoke(prompt_recommendation)
+    recommendation_json= json.dumps(recommendation)
+    return JsonResponse({'Recommedation:': recommendation_json})
+###########################################################################################################
+
+
+
+
+
+
 
 
 def import_and_return_json(request):

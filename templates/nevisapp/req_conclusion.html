@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conclusion</title>
+    <!-- Add CSS styling -->
+    <style>
+        /* Style the container */
+        #conclusion-container {
+            border: 1px solid #ccc; /* Add border */
+            padding: 20px; /* Add padding */
+            margin-bottom: 20px; /* Add margin */
+            border-radius: 5px; /* Add border radius for rounded corners */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add shadow */
+        }
+
+        /* Style the conclusion text */
+        #conclusion-container p {
+            margin: 0; /* Remove default margin */
+        }
+    </style>
+</head>
+<body>
+    <h1>Conclusion</h1>
+    <div id="conclusion-container">
+        <!-- Conclusion will be dynamically inserted here -->
+        'helllo'
+    </div>
+
+    <script>
+        // Fetch conclusion data from the endpoint
+        fetch('http://127.0.0.1:8000/nevisapp/req_conclusion/')
+            .then(response => response.json())
+            .then(data => {
+                // Extract conclusion from the fetched response
+                const conclusion = data.pandu;
+
+                // Display the conclusion on the page
+                const conclusionContainer = document.getElementById('conclusion-container');
+                conclusionContainer.innerHTML = `<p>${conclusion}</p>`;
+            })
+            .catch(error => {
+                console.error('Error fetching conclusion:', error);
+            });
+    </script>
+</body>
+</html>
